@@ -1,6 +1,8 @@
+from collections import deque
 import os 
 import shutil
 import sys
+from file_node import FileNode
 
 
 def checkIfObsidianExists():
@@ -95,6 +97,48 @@ def createCopy(pathFile, pathToDocumentation=""):
             if not os.path.isdir(dirPathStr):
                 os.mkdir(dirPathStr)
 
+
+
+
+
+#instead of using walk ill just implement my own bfs to create the tree
+def navigate_path(initial_path):
+    
+    # TODO change root to name of folder
+    root = FileNode(None, type = "folder", name="root")
+    bfs_dir_queue = deque()
+    
+    all_files = os.listdir(initial_path)
+    files = [file for file in all_files if os.path.isfile(file)]
+    dirs =  [dir for dir in all_files if os.path.isdir(dir)]
+
+    # first add all the files, then create new dir nodes 
+    for file in files:
+        root.add_child(FileNode(root, name=file))
+    for dir in dirs:
+        dir = FileNode(root, name=dir, type="dir")
+        bfs_dir_queue.append(dir)
+        root.add_child(dir)
+
+    while bfs_dir_queue:
+        dir = bfs_dir_queue.popleft()
+        all_files = os.listdir(initial_path)
+        files = [file for file in all_files if os.path.isfile(file)]
+        dirs =  [dir for dir in all_files if os.path.isdir(dir)]
+
+        # first add all the files, then create new dir nodes 
+        for file in files:
+            root.add_child(FileNode(root, name=file))
+        for dir in dirs:
+            dir = FileNode(root, name=dir, type="dir")
+            bfs_dir_queue.append(dir)
+            root.add_child(dir)
+
+
+    return root
+
+
+
 def getFileNames(pathToFile):
 
     ogFilePath = []
@@ -126,6 +170,10 @@ def searchFileForImports(ogFilePath):
         return listOfPackages
     else:
         return []
+
+
+
+
 
 
 def writeImportsObsidianMd(packagesUsed, file):

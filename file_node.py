@@ -1,10 +1,10 @@
 class FileNode:
-    def __init__(self, type="file", name="unnamed"):
+    def __init__(self ,parent ,type="file", name="unnamed"):
         self.type = type #or folder
         self.children = LinkedList()
         self.leaf = True
         self.name = name
-
+        self.parent = parent
 
     def add_child(self, child):
         self.children.insert_beginning(child)
