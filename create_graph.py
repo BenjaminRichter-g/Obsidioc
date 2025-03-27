@@ -122,7 +122,7 @@ def navigate_path(initial_path):
 
     while bfs_dir_queue:
         dir = bfs_dir_queue.popleft()
-        all_files = os.listdir(initial_path)
+        all_files = os.listdir(dir.path)
         files = [file for file in all_files if os.path.isfile(file)]
         dirs =  [dir for dir in all_files if os.path.isdir(dir)]
 
